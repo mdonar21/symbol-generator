@@ -6,23 +6,18 @@
   <title>USAWC MilSymbol Generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://unpkg.com/milsymbol/dist/milsymbol.js"></script>
-  <script src="./assets/milsymbol.js"></script>
-  <!--Laoding a local version of Milsymbols Lib for backups and offline uses-->
   <script src="./assets/milsymbol.development.js"></script>
-  <script src="./assets/symbolMap.js"></script>
-  <!--Loading the symbol List-->
   <link rel="stylesheet" href="./assets/style.css">
   <link rel="icon" type="image/x-icon" href="./img/logoipsum-399.svg">
-  <!--Change this to an icon chosen -->
 </head>
 
 <body>
   <header>
-    <!-- Change pl-->
     <img src="./img/US_Army_War_College_SSI.png" alt="Logo Left">
     <h1>USAWC MilSymbol Generator</h1>
     <img src="./img/dsw.png" alt="Logo Right">
   </header>
+
   <div class="main-layout">
     <aside class="symbolSideBar">
       <div id="symbolPreview"></div>
@@ -31,12 +26,14 @@
         <button id="resetSymbol">🔄 Reset</button>
       </div>
     </aside>
+
     <main class="controls">
+
       <div class="control-group">
         <label for="shape">Symbol Type / Unit Name</label>
-        <select id="shape">
-        </select>
+        <select id="shape"></select>
       </div>
+
       <div class="control-group">
         <label for="affiliation">Affiliation</label>
         <select id="affiliation">
@@ -46,22 +43,27 @@
           <option value="U">Unknown</option>
         </select>
       </div>
+
       <div class="control-group">
         <label for="color">Symbol Color</label>
         <input type="color" id="color" value="#00aaff">
       </div>
+
       <div class="control-group">
         <label for="label">Unique Designation</label>
         <input type="text" id="label" placeholder="e.g. Alpha 1">
       </div>
+
       <div class="control-group">
         <label for="quantity">Quantity</label>
         <input type="text" id="quantity" placeholder="e.g. 3">
       </div>
+
       <div class="control-group">
         <label for="higherFormation">Higher Formation</label>
         <input type="text" id="higherFormation" placeholder="e.g. 2nd Battalion">
       </div>
+
       <div class="control-group">
         <label for="status">Status</label>
         <select id="status">
@@ -71,6 +73,7 @@
           <option value="X">Destroyed (X)</option>
         </select>
       </div>
+
       <div class="control-group">
         <label for="echelon">Echelon</label>
         <select id="echelon">
@@ -87,6 +90,7 @@
           <option value="J">Corps</option>
         </select>
       </div>
+
       <div class="control-group">
         <label for="mobility">Mobility</label>
         <select id="mobility">
@@ -98,6 +102,7 @@
           <option value="MC">Airborne</option>
         </select>
       </div>
+
       <div class="control-group">
         <label for="hq">HQ / Staff</label>
         <select id="hq">
@@ -118,192 +123,15 @@
         <label for="direction">Direction (Degrees)</label>
         <input type="number" id="direction" min="0" max="360" value="45">
       </div>
+
       <div class="control-group">
         <label for="hideText">Hide Text</label>
         <input type="checkbox" id="hideText">
       </div>
     </main>
   </div>
-  <script>
-    // Symbol map (kept for reference and dropdown population)
-    const symbolMap = {
-      // Ground Units (Friendly 'F', Ground 'G', Unit 'PU' Icon Set)
-      "SFGPUCI----R----": "Infantry Unit (Motorized, Reduced)",
-      "SFGPUCA----F----": "Armor Unit (Battalion)",
-      "SFGPUCF----C----": "Engineer Unit (Section)",
-      "SFGPUCR----E----": "Reconnaissance Unit (Company)",
-      "SFGPUCB----F----": "CBRN Unit (Battalion)",
-      /*
-      // Specialized Manoeuvre/Support Modifiers - Commented out because they aren't the right codes 
-      "SFGPUCI----E----": "Light Infantry (Infantry Icon, Company)",
-      "SFGPUCA-A--F----": "Airborne Armor Unit (Armor Icon with Airborne Modifier)",
-      "SFGPUCI-H--E----": "Mechanized Infantry Unit (Infantry Icon with Tracked Modifier)",
-      "SFGPUCDA---F----": "Air Defense Unit (Ground Based)",
-      "SFGPUCFA---F----": "Field Artillery Unit",
-      "SFGPUCMG---F----": "Mortar Unit",
-
-      // Combat Service Support (Friendly 'F', Ground 'G', Unit 'PU' Icon Set)
-      "SFGPUCD----F----": "Signal Unit (Communication/Data)",
-      "SFGPUCCL---E----": "Military Police Unit (Company)",
-      "SFGPUCSM---F----": "Maintenance Unit",
-      "SFGPUCSC---F----": "General Supply Unit",
-      "SFGPUCSW---E----": "Medical Unit (Company)",
-      "SFGPUSF----F----": "Special Forces Unit (Ground)",
-
-      // Air Units (Friendly 'F', Air 'A', Unit 'AU' Icon Set)
-      "SFPCAAF----0----": "Fighter Aircraft (Fixed Wing, Air)",
-      "SFPCAAH----0----": "Bomber Aircraft (Fixed Wing, Air)",
-      "SFPCAAR----0----": "Rotary Wing Unit (Attack/Utility)",
-
-      // Maritime Units
-      "SFUSAAS----0----": "Submarine (Subsurface, Attack)",
-      "SFSSAAR----0----": "Surface Ship (Surface Combatant, Frigate/Destroyer)",
-
-      // Generic Unknown/Unspecified
-      "SUGAU--------": "Unspecified Ground Unit (Unknown Affiliation)"
-      */
-    };
-
-
-    // === Element References ===
-    const els = {
-      // Restored 'shape' reference to the actual select element
-      shape: document.getElementById("shape"),
-
-      affiliation: document.getElementById("affiliation"),
-      color: document.getElementById("color"),
-      label: document.getElementById("label"),
-      quantity: document.getElementById("quantity"),
-      higherFormation: document.getElementById("higherFormation"),
-      status: document.getElementById("status"),
-      echelon: document.getElementById("echelon"),
-      mobility: document.getElementById("mobility"),
-      hq: document.getElementById("hq"),
-      reinforcedReduced: document.getElementById("reinforcedReduced"),
-      direction: document.getElementById("direction"),
-      hideText: document.getElementById("hideText"),
-      preview: document.getElementById("symbolPreview"),
-      saveSvg: document.getElementById("saveSvg"),
-      reset: document.getElementById("resetSymbol")
-    };
-    // --- Main Update Function (Simplified) ---
-    function updateSymbol() {
-      const baseSIDC_15Char = els.shape.value;
-      let finalSIDC = baseSIDC_15Char.substring(0, 10) + '00000*****';
-      // 1. Apply Affiliation (Index 1) and Status (Index 3)
-      finalSIDC = finalSIDC.substring(0, 1) + els.affiliation.value + finalSIDC.substring(2);
-      finalSIDC = finalSIDC.substring(0, 3) + els.status.value + finalSIDC.substring(4);
-      // 2. Apply Echelon to position 11
-      let char11 = els.echelon.value || '-';
-      // 3. Apply HQ to position 12
-      let char12 = els.hq.value || '-';
-      // Rebuild final 15-char SIDC
-      finalSIDC = finalSIDC.substring(0, 10) + char11 + char12 + finalSIDC.substring(13);
-      const directionValue = parseFloat(els.direction.value) || 0;
-      const customColor = els.color.value;
-      const opts = {
-        size: 130,
-        monoColor: customColor,
-        direction: directionValue,
-        svg: true,
-        // Text Fields
-        uniqueDesignation: els.hideText.checked ? "" : els.label.value,
-        quantity: els.hideText.checked ? "" : els.quantity.value,
-        higherFormation: els.hideText.checked ? "" : els.higherFormation.value,
-        reinforcedReduced: els.reinforcedReduced.value,
-        // Echelon/Mobility/HQ are passed as options for graphic rendering
-        echelon: els.echelon.value,
-        mobility: els.mobility.value,
-        headquartersElement: els.hq.value === 'A' ? 'A' : '',
-
-        infoFields: !els.hideText.checked
-      };
-      if (typeof ms !== 'undefined' && ms.Symbol) {
-        try {
-          const symbol = new ms.Symbol(finalSIDC, opts);
-          els.preview.innerHTML = "";
-          els.preview.appendChild(symbol.asDOM());
-
-          const bbox = symbol.bbox;
-          const strokeBuffer = (symbol.style.strokeWidth || 4) + (symbol.style.outlineWidth || 0) + 5;
-          const viewBox =
-            `${bbox.x1 - strokeBuffer} ${bbox.y1 - strokeBuffer} ${symbol.baseWidth + 2 * strokeBuffer} ${symbol.baseHeight + 2 * strokeBuffer}`;
-          els.preview.querySelector('svg').setAttribute('viewBox', viewBox);
-
-        } catch (e) {
-          els.preview.innerHTML = `⚠️ Invalid SIDC: ${finalSIDC}. Error: ${e.message}`;
-          console.error("Milsymbol error for SIDC:", finalSIDC, e);
-        }
-      } else {
-        els.preview.innerHTML = "⚠️ milsymbol library not loaded.";
-      }
-    }
-    // --- Populate Dropdown ---
-    function populateDropdown() {
-      els.shape.innerHTML = '';
-      for (const [sidc, name] of Object.entries(symbolMap)) {
-        const option = document.createElement('option');
-        // *** CRITICAL CHANGE: Only display the unit name, not the SIDC. ***
-        option.textContent = name;
-        // The value remains the SIDC for the updateSymbol function
-        option.value = sidc;
-        els.shape.appendChild(option);
-      }
-
-      // Set a default and call update
-      if (els.shape.options.length > 0) {
-        els.shape.value = els.shape.options[0].value;
-      }
-    }
-    // === Save as SVG ===
-    function saveAsSVG() {
-      const svg = els.preview.querySelector("svg");
-      if (!svg) return alert("⚠️ No symbol to save!");
-      const blob = new Blob([new XMLSerializer().serializeToString(svg)], {
-        type: "image/svg+xml"
-      });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      // Use the selected option's text for the file name
-      const name = els.shape.options[els.shape.selectedIndex].textContent.replace(/ /g, '_') || "milsymbol";
-      link.download = `${name}.svg`;
-      link.click();
-      URL.revokeObjectURL(link.href);
-    }
-    // === Reset ===
-    function resetSymbol() {
-      if (!confirm("Reset all symbol settings?")) return;
-      // Reset controls to the first option or a default value
-      els.shape.selectedIndex = 0;
-      els.affiliation.value = "F";
-      els.color.value = "#00aaff";
-      els.label.value = "";
-      els.quantity.value = "";
-      els.higherFormation.value = "";
-      els.status.value = "P";
-      els.echelon.value = "";
-      els.mobility.value = "";
-      els.hq.value = "";
-      els.reinforcedReduced.value = "";
-      els.direction.value = "45";
-      els.hideText.checked = false;
-
-      updateSymbol();
-    }
-    // --- Initialization ---
-    populateDropdown();
-    // === Event Listeners ===
-    // Listeners for all controls now point directly to updateSymbol
-    Object.values(els).forEach(el => {
-      if (el && el.tagName) el.addEventListener("input", updateSymbol);
-    });
-    els.saveSvg.addEventListener("click", saveAsSVG);
-    els.reset.addEventListener("click", resetSymbol);
-
-    // Initial call to draw the symbol after populating dropdown
-    updateSymbol();
-  </script>
-  -->
+  <!-- Import symbol map and logic -->
+  <script type="module" src="./assets/main.js"></script>
 </body>
 
 </html>
