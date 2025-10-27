@@ -28,12 +28,20 @@
     </aside>
 
     <main class="controls">
-
+      <!--Search Bar-->
+      <div class="control-group">
+        <label for="shapeSearch">Search Symbol</label>
+        <input type="text" id="shapeSearch" placeholder="Search symbol name...">
+        <select id="shape"></select>
+      </div>
+      <!--
+      Symbol Dropdown- Uneeded keeping for backup in case it suddenly is needed 
       <div class="control-group">
         <label for="shape">Symbol Type / Unit Name</label>
         <select id="shape"></select>
       </div>
-
+    -->
+      <!--Affiliation Group-->
       <div class="control-group">
         <label for="affiliation">Affiliation</label>
         <select id="affiliation">
@@ -43,27 +51,27 @@
           <option value="U">Unknown</option>
         </select>
       </div>
-
+      <!--Symbol Color-->
       <div class="control-group">
         <label for="color">Symbol Color</label>
         <input type="color" id="color" value="#00aaff">
       </div>
-
+      <!--Symbol Designation-->
       <div class="control-group">
         <label for="label">Unique Designation</label>
         <input type="text" id="label" placeholder="e.g. Alpha 1">
       </div>
-
+      <!--Quantity-->
       <div class="control-group">
         <label for="quantity">Quantity</label>
         <input type="text" id="quantity" placeholder="e.g. 3">
       </div>
-
+      <!--Formation-->
       <div class="control-group">
         <label for="higherFormation">Higher Formation</label>
         <input type="text" id="higherFormation" placeholder="e.g. 2nd Battalion">
       </div>
-
+      <!--Status-->
       <div class="control-group">
         <label for="status">Status</label>
         <select id="status">
@@ -73,7 +81,7 @@
           <option value="X">Destroyed (X)</option>
         </select>
       </div>
-
+      <!--Echelon-->
       <div class="control-group">
         <label for="echelon">Echelon</label>
         <select id="echelon">
@@ -90,7 +98,7 @@
           <option value="J">Corps</option>
         </select>
       </div>
-
+      <!--Mobility-->
       <div class="control-group">
         <label for="mobility">Mobility</label>
         <select id="mobility">
@@ -102,7 +110,7 @@
           <option value="MC">Airborne</option>
         </select>
       </div>
-
+      <!--Headquaters-->
       <div class="control-group">
         <label for="hq">HQ / Staff</label>
         <select id="hq">
@@ -110,6 +118,7 @@
           <option value="A">Headquarters</option>
         </select>
       </div>
+      <!--Reinforced-->
       <div class="control-group">
         <label for="reinforcedReduced">Reinforced / Reduced</label>
         <select id="reinforcedReduced">
@@ -119,17 +128,25 @@
           <option value="±">Reinforced/Reduced (±)</option>
         </select>
       </div>
+      <!---Degrees-->
       <div class="control-group">
         <label for="direction">Direction (Degrees)</label>
         <input type="number" id="direction" min="0" max="360" value="45">
       </div>
-
+      <!--Hide Text -->
       <div class="control-group">
         <label for="hideText">Hide Text</label>
         <input type="checkbox" id="hideText">
       </div>
     </main>
   </div>
+  <!--
+    Change Footer once project is done 
+    This is just incase someone finds this in github 
+  -->
+  <footer>
+    <h2>united States Army War College Unit Generator</h2>
+  </footer>
   <!-- Import symbol map and logic -->
   <script type="module" src="./assets/main.js"></script>
 </body>
