@@ -144,8 +144,38 @@ header h1 {
   border-color: #0077cc;
   outline: none;
 }
+/* FOOTER */
+#footer {
+  background: #221f20;
+  color: white;
+  border-top: 4px solid #ffcc01;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-top: auto; 
+}
 
-/* RESPONSIVE */
+
+#footer a {
+  color: #ffcc01;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+#footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 700px) {
+  #footer {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+}
+
 @media (max-width: 1000px) {
   .main-layout {
     flex-direction: column;
