@@ -1,4 +1,30 @@
 // symbols.js
+/*
+
+This is pulled from an XML list found on an open source github project using the same libary using the format 
+Done to save time in creating the list form hand
+
+S – Scheme (Warfighting)
+
+F – Affiliation (Friendly)
+
+G – Battle Dimension (Ground Unit)
+
+P – Status (Present)
+
+U – Function (Unit)
+
+C – Unit Type (Infantry)
+
+I – Additional Unit Descriptor (e.g., Mechanized / specific subtype)
+
+Important Notes:
+
+Some units will not be able to have certain settings applied to them.
+
+Some units may appear as a question mark, indicating a failed or invalid unit code in this list.
+*/
+
 export const symbolMap = {
   // Ground Units (Friendly, Ground, Unit)
   "SFGPUCI---R----": "Infantry Unit (Motorized, Reduced)", // From second list

@@ -168,6 +168,7 @@ header h1 {
   text-decoration: underline;
 }
 
+/*Mobile CSS should be good for screens up to a small tablet */
 @media (max-width: 700px) {
   #footer {
     flex-direction: column;
