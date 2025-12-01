@@ -1,6 +1,8 @@
 //Loads and imports the list of premade symbols from symbols.js
 
-import { symbolMap } from "./symbols.js";
+import {
+  symbolMap
+} from "./symbols.js";
 
 //Stores all doms and ids in one const var "els"
 const els = {
@@ -26,18 +28,33 @@ const els = {
 //Creatres and populates the dropdown for symbol searching with the names from symbols.js 
 //Gets rid of the sidc code  and fliters the searched term to lowercase 
 //Turns all search results into a option html element
+//Can now search the list using the new list structure with categories
 function populateDropdown(filter = "") {
   const current = els.shape.value;
   els.shape.innerHTML = "";
 
-  for (const [sidc, name] of Object.entries(symbolMap)) {
-    if (filter && !name.toLowerCase().includes(filter.toLowerCase())) continue;
-    const option = document.createElement("option");
-    option.value = sidc;
-    option.textContent = name;
-    els.shape.appendChild(option);
-  }
+  const groups = {};
+  symbolMap.forEach(symbol => {
+    if (filter && !symbol.name.toLowerCase().includes(filter.toLowerCase())) return;
+    if (!groups[symbol.category]) groups[symbol.category] = [];
+    groups[symbol.category].push(symbol);
+  });
 
+  Object.entries(groups).forEach(([category, symbols]) => {
+    const optgroup = document.createElement("optgroup");
+    optgroup.label = category;
+
+    symbols.forEach(symbol => {
+      const option = document.createElement("option");
+      option.value = symbol.code;
+      option.textContent = symbol.name;
+      optgroup.appendChild(option);
+    });
+
+    els.shape.appendChild(optgroup);
+  });
+
+  // Restore previously selected value if it exists
   if ([...els.shape.options].some(opt => opt.value === current)) {
     els.shape.value = current;
   } else if (els.shape.options.length) {
@@ -49,27 +66,27 @@ function populateDropdown(filter = "") {
 function updateSymbol() {
   let sidc = els.shape.value;
   if (!sidc) return;
-//spiltting the sidc of the symbol into a array of characters for easy modifaction 
-//Will scale to any format of sidc in the list 
+  //spiltting the sidc of the symbol into a array of characters for easy modifaction 
+  //Will scale to any format of sidc in the list 
   const chars = sidc.split("");
-  chars[1]  = els.affiliation.value || chars[1];//Modifies the first character of the sidc to match the affiliation value (second letter in sidc)
-  chars[3]  = els.status.value || chars[3];//Modifies the fourth character of the sidc to match the status value (fourth letter in sidc)
+  chars[1] = els.affiliation.value || chars[1]; //Modifies the first character of the sidc to match the affiliation value (second letter in sidc)
+  chars[3] = els.status.value || chars[3]; //Modifies the fourth character of the sidc to match the status value (fourth letter in sidc)
   chars[10] = els.echelon.value || "-"; // Modifies the eleventh character of the sidc to match the echelon value (eleventh letter in sidc)
-  chars[11] = els.mobility.value || "-";// Modifies the twelfth character of the sidc to match the mobility value (twelfth letter in sidc)
+  chars[11] = els.mobility.value || "-"; // Modifies the twelfth character of the sidc to match the mobility value (twelfth letter in sidc)
 
   //Rejoins the modified array back into a string for the sidc
   sidc = chars.join("");
 
-//Tries to create a new symbol with the modified sidc and the other options selected in the UI
+  //Tries to create a new symbol with the modified sidc and the other options selected in the UI
   try {
     const symbol = new ms.Symbol(sidc, {
-      size: 130,//sets the size of the smbol the symbols are made as SVG so this should not be modified.
+      size: 130, //sets the size of the smbol the symbols are made as SVG so this should not be modified.
       monoColor: els.color.value, //sets the color of the symbol gotten from the color picker in the UI
       direction: parseFloat(els.direction.value) || 0, //sets the direction of the symbol based on the input in the UI
       svg: true, //ensures the symbol is created as an SVG
       uniqueDesignation: els.hideText.checked ? "" : els.label.value, //Checks if the hide text checkbox is checked if so it hides the label
       quantity: els.hideText.checked ? "" : els.quantity.value, //Checks if the hide text checkbox is checked if so it hides the quantity
-      higherFormation: els.hideText.checked ? "" : els.higherFormation.value, 
+      higherFormation: els.hideText.checked ? "" : els.higherFormation.value,
       infoFields: !els.hideText.checked,
       headquartersElement: els.hq.value || undefined, //Sets the hq character to either a "" empty string or the selceted A for headquetrs in sidc
       reinforcedReduced: els.reinforcedReduced.value || undefined //Sets the reinforced/reduced character to either a "" empty string or the selceted + or - in sidc
@@ -92,7 +109,7 @@ els.shapeSearch.addEventListener("input", () => {
 els.shape.addEventListener("change", updateSymbol);
 
 //Listens for input changes on multiple elements and calls updateSymbol
-[ 
+[
   els.affiliation,
   els.status,
   els.echelon,
@@ -111,7 +128,9 @@ els.shape.addEventListener("change", updateSymbol);
 els.saveSvg.addEventListener("click", () => {
   const svg = els.preview.querySelector("svg");
   if (!svg) return alert(" No symbol to save!");
-  const blob = new Blob([new XMLSerializer().serializeToString(svg)], { type: "image/svg+xml" });
+  const blob = new Blob([new XMLSerializer().serializeToString(svg)], {
+    type: "image/svg+xml"
+  });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = `${els.shape.options[els.shape.selectedIndex].textContent.replace(/ /g, "_")}.svg`;
