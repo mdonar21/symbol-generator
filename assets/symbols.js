@@ -16,6 +16,9 @@ C – Unit Type (Infantry)
 
 I – Additional Unit Descriptor (e.g., Mechanized / specific subtype)
 However they are now spilted into a code section where the SIDC codes are defined and a name and category section for easier browsing and selection in the UI
+
+All symbols have been tested to work with most options in the UI 
+Remove any that do not work with the current rendering system
 */
 export const symbolMap = [
   // ==========================

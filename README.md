@@ -26,9 +26,9 @@ A list of helping sites that I used during the creation may come in handy when m
 
 Contributors names and contact info
 
-ex. Michael Donar 
-ex. [Linkedin](https://www.linkedin.com/in/michael-donar/)
-ex. [Github](https://github.com/mdonar21)
+ Michael Donar 
+[Linkedin](https://www.linkedin.com/in/michael-donar/)
+ [Github](https://github.com/mdonar21)
 
 
 
