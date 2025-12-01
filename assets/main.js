@@ -1,59 +1,34 @@
+//Loads and imports the list of premade symbols from symbols.js
+
 import { symbolMap } from "./symbols.js";
 
-
-// ============================================================
-// assets/main.js
-//
-// Purpose: Small UI glue code for choosing and rendering a
-// military symbol (SIDC). It maps HTML controls to SIDC
-// character positions, configures the renderer, and shows an
-// SVG preview that can be downloaded.
-//
-// Contract (short):
-// - Inputs: values from the page controls (dropdowns, text inputs,
-//   checkboxes) referenced in `els` below.
-// - Output: an SVG node appended to `els.preview` (or an error
-//   message shown there if rendering fails).
-// - Errors: invalid SIDC or renderer failures are shown to the user
-//   rather than throwing uncaught exceptions.
-//
-// Quick SIDC notes for newcomers:
-// - A SIDC is treated here as a fixed-length string of characters.
-// - We edit specific zero-based character positions to reflect
-//   user choices (e.g., affiliation at index 1, status at index 3).
-// ============================================================
-
-// === Element References ===
-// Collect DOM references once so the rest of the code can use
-// short names (els.*) rather than repeatedly calling
-// document.getElementById.
+//Stores all doms and ids in one const var "els"
 const els = {
-  shape: document.getElementById("shape"), // main SIDC dropdown
-  shapeSearch: document.getElementById("shapeSearch"), // text filter for dropdown
-  affiliation: document.getElementById("affiliation"), // alters SIDC index 1
-  color: document.getElementById("color"), // visual color override
-  label: document.getElementById("label"), // unique designation text
-  quantity: document.getElementById("quantity"), // quantity text field
-  higherFormation: document.getElementById("higherFormation"), // higher formation text
-  status: document.getElementById("status"), // alters SIDC index 3
-  echelon: document.getElementById("echelon"), // alters SIDC index 10
-  mobility: document.getElementById("mobility"), // alters SIDC index 11
-  hq: document.getElementById("hq"), // optional HQ/staff modifier
-  reinforcedReduced: document.getElementById("reinforcedReduced"), // optional modifier
-  direction: document.getElementById("direction"), // rotation in degrees
-  hideText: document.getElementById("hideText"), // when checked, hides text fields
-  preview: document.getElementById("symbolPreview"), // where SVG is placed
-  saveSvg: document.getElementById("saveSvg"), // download button
-  reset: document.getElementById("resetSymbol") // reset to defaults
+  shape: document.getElementById("shape"),
+  shapeSearch: document.getElementById("shapeSearch"),
+  affiliation: document.getElementById("affiliation"),
+  color: document.getElementById("color"),
+  label: document.getElementById("label"),
+  quantity: document.getElementById("quantity"),
+  higherFormation: document.getElementById("higherFormation"),
+  status: document.getElementById("status"),
+  echelon: document.getElementById("echelon"),
+  mobility: document.getElementById("mobility"),
+  hq: document.getElementById("hq"),
+  reinforcedReduced: document.getElementById("reinforcedReduced"),
+  direction: document.getElementById("direction"),
+  hideText: document.getElementById("hideText"),
+  preview: document.getElementById("symbolPreview"),
+  saveSvg: document.getElementById("saveSvg"),
+  reset: document.getElementById("resetSymbol")
 };
 
-// === Populate symbol dropdown with optional search filter ===
-// Fill the `shape` dropdown using `symbolMap` (SIDC -> friendly name).
-// If a `filter` is provided, only symbols whose friendly name
-// contains the filter text (case-insensitive) are included.
+//Creatres and populates the dropdown for symbol searching with the names from symbols.js 
+//Gets rid of the sidc code  and fliters the searched term to lowercase 
+//Turns all search results into a option html element
 function populateDropdown(filter = "") {
-  const current = els.shape.value; // try to preserve selection
-  els.shape.innerHTML = ""; // clear existing options
+  const current = els.shape.value;
+  els.shape.innerHTML = "";
 
   for (const [sidc, name] of Object.entries(symbolMap)) {
     if (filter && !name.toLowerCase().includes(filter.toLowerCase())) continue;
@@ -63,80 +38,60 @@ function populateDropdown(filter = "") {
     els.shape.appendChild(option);
   }
 
-  // Keep the previously selected SIDC selected if it's still present.
   if ([...els.shape.options].some(opt => opt.value === current)) {
     els.shape.value = current;
   } else if (els.shape.options.length) {
-    // Otherwise select the first option so there's a valid SIDC.
     els.shape.selectedIndex = 0;
   }
 }
 
-// === Update symbol preview ===
-// Read the current UI controls, encode the SIDC string accordingly,
-// and ask the ms.Symbol renderer to create an SVG which we place in
-// the preview area. Errors are caught and shown to the user.
+//function for finding the symbols in the dropdown 
 function updateSymbol() {
   let sidc = els.shape.value;
-  if (!sidc) return; // nothing selected yet
-
-  // Work with the SIDC as an array of characters so we can replace
-  // individual positions easily.
+  if (!sidc) return;
+//spiltting the sidc of the symbol into a array of characters for easy modifaction 
+//Will scale to any format of sidc in the list 
   const chars = sidc.split("");
+  chars[1]  = els.affiliation.value || chars[1];//Modifies the first character of the sidc to match the affiliation value (second letter in sidc)
+  chars[3]  = els.status.value || chars[3];//Modifies the fourth character of the sidc to match the status value (fourth letter in sidc)
+  chars[10] = els.echelon.value || "-"; // Modifies the eleventh character of the sidc to match the echelon value (eleventh letter in sidc)
+  chars[11] = els.mobility.value || "-";// Modifies the twelfth character of the sidc to match the mobility value (twelfth letter in sidc)
 
-  // The following indexes correspond to standard SIDC fields.
-  // We only overwrite them if the UI control provides a value;
-  // otherwise we keep the original character (or use a '-' where
-  // the renderer expects an explicit blank).
-  chars[1]  = els.affiliation.value || chars[1];   // Affiliation (index 1)
-  chars[3]  = els.status.value || chars[3];       // Status (index 3)
-  chars[10] = els.echelon.value || "-";          // Echelon (index 10)
-  chars[11] = els.mobility.value || "-";         // Mobility (index 11)
-
-  // Reconstruct the SIDC string after modifications.
+  //Rejoins the modified array back into a string for the sidc
   sidc = chars.join("");
 
+//Tries to create a new symbol with the modified sidc and the other options selected in the UI
   try {
-    // Create the symbol renderer object. The options below are
-    // pulled directly from the UI controls.
     const symbol = new ms.Symbol(sidc, {
-      size: 130,
-      monoColor: els.color.value,
-      direction: parseFloat(els.direction.value) || 0,
-      svg: true,
-      uniqueDesignation: els.hideText.checked ? "" : els.label.value,
-      quantity: els.hideText.checked ? "" : els.quantity.value,
-      higherFormation: els.hideText.checked ? "" : els.higherFormation.value,
-      // If hideText is checked we don't render the info fields.
+      size: 130,//sets the size of the smbol the symbols are made as SVG so this should not be modified.
+      monoColor: els.color.value, //sets the color of the symbol gotten from the color picker in the UI
+      direction: parseFloat(els.direction.value) || 0, //sets the direction of the symbol based on the input in the UI
+      svg: true, //ensures the symbol is created as an SVG
+      uniqueDesignation: els.hideText.checked ? "" : els.label.value, //Checks if the hide text checkbox is checked if so it hides the label
+      quantity: els.hideText.checked ? "" : els.quantity.value, //Checks if the hide text checkbox is checked if so it hides the quantity
+      higherFormation: els.hideText.checked ? "" : els.higherFormation.value, 
       infoFields: !els.hideText.checked,
-      // Optional modifiers; pass `undefined` if not set so the
-      // renderer uses its defaults.
-      headquartersElement: els.hq.value || undefined,
-      reinforcedReduced: els.reinforcedReduced.value || undefined
+      headquartersElement: els.hq.value || undefined, //Sets the hq character to either a "" empty string or the selceted A for headquetrs in sidc
+      reinforcedReduced: els.reinforcedReduced.value || undefined //Sets the reinforced/reduced character to either a "" empty string or the selceted + or - in sidc
     });
 
-    // Put the resulting SVG into the preview element.
+    //Clears the preview area and appends the new symbol as a DOM element
     els.preview.innerHTML = "";
     els.preview.appendChild(symbol.asDOM());
+    //Errors checking may not be necessary as milsymbols library should handle invalid sidc codes internally via question mark symbols
   } catch (e) {
-    // Rendering failed (bad SIDC/options). Show a friendly message.
-    els.preview.innerHTML = `⚠️ Invalid symbol: ${e.message}`;
+    els.preview.innerHTML = ` Invalid symbol: ${e.message}`;
   }
 }
 
-
-// === Event Listeners ===
-
-// Typing into the search box filters the dropdown but does not
-// immediately update the preview (so typing won't cause flicker).
+//Event listeners for the various UI elements to update the symbol preview when changed
 els.shapeSearch.addEventListener("input", () => {
   populateDropdown(els.shapeSearch.value);
 });
 
-// When the user picks a shape, refresh the preview.
 els.shape.addEventListener("change", updateSymbol);
 
-// Controls that should trigger an immediate preview update.
+//Listens for input changes on multiple elements and calls updateSymbol
 [ 
   els.affiliation,
   els.status,
@@ -152,10 +107,10 @@ els.shape.addEventListener("change", updateSymbol);
   els.hideText
 ].forEach(el => el.addEventListener("input", updateSymbol));
 
-// Save the currently-rendered SVG to a downloadable file.
+//Saves the current symbol as an SVG file when the save button is clicked
 els.saveSvg.addEventListener("click", () => {
   const svg = els.preview.querySelector("svg");
-  if (!svg) return alert("⚠️ No symbol to save!");
+  if (!svg) return alert(" No symbol to save!");
   const blob = new Blob([new XMLSerializer().serializeToString(svg)], { type: "image/svg+xml" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
@@ -164,7 +119,7 @@ els.saveSvg.addEventListener("click", () => {
   URL.revokeObjectURL(link.href);
 });
 
-// Reset UI controls back to sensible defaults and refresh the UI.
+//Resets all symbol settings to default values when the reset button is clicked
 els.reset.addEventListener("click", () => {
   if (!confirm("Reset all symbol settings?")) return;
 
@@ -186,7 +141,6 @@ els.reset.addEventListener("click", () => {
   populateDropdown();
   updateSymbol();
 });
-
-// === Initialize ===
+//Initial population of the dropdown and symbol preview on page load
 populateDropdown();
 updateSymbol();
