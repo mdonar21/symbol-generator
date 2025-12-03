@@ -72,12 +72,31 @@
           <option value="U">Unknown</option>
         </select>
       </div>
-      <!--Symbol Color-->
+
+      <!--Color Switching-->
+      <div class="control-group" id="colorBox">
+        <label for="useCustomColor">Symbol Color Options</label>
+
+        <div style="margin-top: 2em; font-size: 12px; text-align: center;">
+          <label>
+            <input type="checkbox" id="useCustomColor">
+            Use Custom Color (Override affiliation color)
+          </label>
+        </div>
+
+        <!-- Hidden unless custom colors are enabled -->
+        <div id="customColorWrapper" style="display: none; margin-top: 8px;">
+          <label for="color">Pick Custom Color:</label>
+          <input type="color" id="color" value="#00aaff">
+        </div>
+      </div>
+
+      <!--Symbol Color
       <div class="control-group">
         <label for="color">Symbol Color - Will Overwrite Current Affiliation Color</label>
         <input type="color" id="color" value="#00aaff">
       </div>
-
+    -->
       <!--Symbol Designation-->
       <div class="control-group">
         <label for="label">Unique Designation</label>

@@ -1,7 +1,5 @@
 # Project Title
-
-
-
+NATO symbol generator - For the United States Army War College
 ## Description
 
 A symbol generator designed for use by the United States Army War College.

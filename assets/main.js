@@ -23,8 +23,45 @@ const els = {
   preview: document.getElementById("symbolPreview"),
   saveSvg: document.getElementById("saveSvg"),
   reset: document.getElementById("resetSymbol"),
+  useCustomColor: document.getElementById("useCustomColor"),
+  customColorWrapper: document.getElementById("customColorWrapper"),
+
 };
 
+//Logic for tracking if the user has changed the color picker
+els.color.addEventListener("input", () => {
+  els.color.dataset.userChanged = "true";
+});
+
+// Show/hide color picker when toggle is changed
+els.useCustomColor.addEventListener("change", () => {
+  if (els.useCustomColor.checked) {
+    els.customColorWrapper.style.display = "block";
+  } else {
+    els.customColorWrapper.style.display = "none";
+  }
+  updateSymbol();
+});
+
+
+// Show/hide color picker when toggle is changed
+els.useCustomColor.addEventListener("change", () => {
+  if (els.useCustomColor.checked) {
+    els.customColorWrapper.style.display = "block";
+  } else {
+    els.customColorWrapper.style.display = "none";
+  }
+  updateSymbol();
+});
+
+
+//Sets the Affilation Colors to the NATO defaults based on the UI 
+const affilationColors = {
+  'F': '#0000FF', // Freiendly Colors - Freiendly Blue
+  'H': '#ff0000', // Hostile - Red
+  'N': '#00ff00', //Neutral - Green
+  'U': '#ffff00', //Unkown - Yellow
+};
 
 //Creatres and populates the dropdown for symbol searching with the names from symbols.js 
 //Gets rid of the sidc code  and fliters the searched term to lowercase 
@@ -69,14 +106,25 @@ function updateSymbol() {
   let sidc = els.shape.value;
   if (!sidc) return;
 
+  let affiliation = els.affiliation.value;
+  let color;
 
+  // If custom color is NOT used → affiliation color
+  if (!els.useCustomColor.checked) {
+    color = affilationColors[affiliation] || "#000000";
+    els.color.value = color; // sync picker just in case
+  }
+  // If custom color IS used → user-picked color
+  else {
+    color = els.color.value;
+  }
 
   //spiltting the sidc of the symbol into a array of characters for easy modifaction 
   //Will scale to any format of sidc in the list 
   const chars = sidc.split("");
   chars[1] = els.affiliation.value || chars[1]; //Modifies the first character of the sidc to match the affiliation value (second letter in sidc)
   chars[3] = els.status.value || chars[3]; //Modifies the fourth character of the sidc to match the status value (fourth letter in sidc)
- 
+
   chars[10] = els.echelon.value || chars[10]; // Modifies the eleventh character of the sidc to match the echelon value (eleventh letter in sidc)
   chars[11] = els.mobility.value || chars[11]; // Modifies the twelfth character of the sidc to match the mobility value (twelfth letter in sidc)
 
@@ -146,9 +194,10 @@ els.saveSvg.addEventListener("click", () => {
 });
 
 //Resets all symbol settings to default values when the reset button is clicked
+//Add any els tjat are added to this line to ensure proper reset
 els.reset.addEventListener("click", () => {
-  if (!confirm("Reset all symbol settings?")) return;
-
+  els.useCustomColor.checked = false;
+  els.customColorWrapper.style.display = "none";
   els.shapeSearch.value = "";
   els.shape.selectedIndex = 0;
   els.affiliation.value = "F";
@@ -163,7 +212,7 @@ els.reset.addEventListener("click", () => {
   els.higherFormation.value = "";
   els.direction.value = "45";
   els.hideText.checked = false;
-
+  delete els.color.dataset.userChanged;
   populateDropdown();
   updateSymbol();
 });
