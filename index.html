@@ -14,6 +14,7 @@
   <!--Placeholder fav icon for easier id in tab bar-->
   <link rel="icon" type="image/x-icon" href="./img/logoipsum-399.svg">
 </head>
+
 <body>
   <!--
   Header with Logos for USAWC and DSW 
@@ -73,7 +74,7 @@
       </div>
       <!--Symbol Color-->
       <div class="control-group">
-        <label for="color">Symbol Color</label>
+        <label for="color">Symbol Color - Will Overwrite Current Affiliation Color</label>
         <input type="color" id="color" value="#00aaff">
       </div>
 
@@ -110,8 +111,8 @@
       <div class="control-group">
         <label for="echelon">Echelon</label>
         <select id="echelon">
-          <option value="">None</option>
-          <option value="A">Team/Crew</option>
+          <option value="A">None</option>
+          <option value="T">Team/Crew</option>
           <option value="B">Squad</option>
           <option value="C">Section</option>
           <option value="D">Platoon</option>
@@ -170,6 +171,8 @@
       </div>
     </main>
   </div>
+
+
 
   <!-- 
   Footer

@@ -22,8 +22,9 @@ const els = {
   hideText: document.getElementById("hideText"),
   preview: document.getElementById("symbolPreview"),
   saveSvg: document.getElementById("saveSvg"),
-  reset: document.getElementById("resetSymbol")
+  reset: document.getElementById("resetSymbol"),
 };
+
 
 //Creatres and populates the dropdown for symbol searching with the names from symbols.js 
 //Gets rid of the sidc code  and fliters the searched term to lowercase 
@@ -62,26 +63,32 @@ function populateDropdown(filter = "") {
   }
 }
 
-//function for finding the symbols in the dropdown 
+//Main Function that handles symbol creation and updating 
+//Spilts the sidc code into chars that can be modifed with the values from the index 
 function updateSymbol() {
   let sidc = els.shape.value;
   if (!sidc) return;
+
+
+
   //spiltting the sidc of the symbol into a array of characters for easy modifaction 
   //Will scale to any format of sidc in the list 
   const chars = sidc.split("");
   chars[1] = els.affiliation.value || chars[1]; //Modifies the first character of the sidc to match the affiliation value (second letter in sidc)
   chars[3] = els.status.value || chars[3]; //Modifies the fourth character of the sidc to match the status value (fourth letter in sidc)
-  chars[10] = els.echelon.value || "-"; // Modifies the eleventh character of the sidc to match the echelon value (eleventh letter in sidc)
-  chars[11] = els.mobility.value || "-"; // Modifies the twelfth character of the sidc to match the mobility value (twelfth letter in sidc)
+ 
+  chars[10] = els.echelon.value || chars[10]; // Modifies the eleventh character of the sidc to match the echelon value (eleventh letter in sidc)
+  chars[11] = els.mobility.value || chars[11]; // Modifies the twelfth character of the sidc to match the mobility value (twelfth letter in sidc)
 
   //Rejoins the modified array back into a string for the sidc
   sidc = chars.join("");
 
   //Tries to create a new symbol with the modified sidc and the other options selected in the UI
+  //ms.symbol is from the milsymbols library must be named the same to creatre a new symbol
   try {
     const symbol = new ms.Symbol(sidc, {
       size: 130, //sets the size of the smbol the symbols are made as SVG so this should not be modified.
-      monoColor: els.color.value, //sets the color of the symbol gotten from the color picker in the UI
+      monoColor: color, //sets the color of the symbol gotten from the color picker in the UI
       direction: parseFloat(els.direction.value) || 0, //sets the direction of the symbol based on the input in the UI
       svg: true, //ensures the symbol is created as an SVG
       uniqueDesignation: els.hideText.checked ? "" : els.label.value, //Checks if the hide text checkbox is checked if so it hides the label
@@ -121,7 +128,7 @@ els.shape.addEventListener("change", updateSymbol);
   els.quantity,
   els.higherFormation,
   els.direction,
-  els.hideText
+  els.hideText,
 ].forEach(el => el.addEventListener("input", updateSymbol));
 
 //Saves the current symbol as an SVG file when the save button is clicked
